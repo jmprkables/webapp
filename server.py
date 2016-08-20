@@ -10,7 +10,7 @@ app = Flask(__name__)
 def hello_world():
     return "Welcome to jmprkableserver"
 
-@app.route('/fall', methods=['POST'])
+@app.route('/fall', methods=['GET'])
 def fall():
     timezone = time.strftime("%z")
     reql_tz = r.make_timezone(timezone[:3] + ":" + timezone[3:])
@@ -22,18 +22,18 @@ def fall():
     data = request.data
     dataDict = json.loads(data)
     try:
-        status = dataDict["status"]
+        fallen = dataDict["fallen"]
     except:
         return("Invalid data")
 
     r.table("fall").insert({
-        "status": status,
+        "fallen": fallen,
         'from_object': the_date,
         'from_epoch': r.epoch_time(timestamp),
         'from_iso': r.iso8601(json_date)
     }).run(conn)
 
-@app.route('/medicine', methods=['POST'])
+@app.route('/medicine', methods=['GET'])
 def medicine():
     timezone = time.strftime("%z")
     reql_tz = r.make_timezone(timezone[:3] + ":" + timezone[3:])
@@ -56,7 +56,7 @@ def medicine():
         'from_iso': r.iso8601(json_date)
     }).run(conn)
 
-@app.route('/door', methods=['POST'])
+@app.route('/door', methods=['GET'])
 def door():
     data = request.data
     dataDict = json.loads(data)
@@ -72,4 +72,4 @@ def door():
 
 
 if __name__ == "__main__":
-    app.run(port=8085, debug=True, host="0.0.0.0")
+    app.run(port=8085, debug=False, host="0.0.0.0")

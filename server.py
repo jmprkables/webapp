@@ -6,6 +6,9 @@ import json
 
 app = Flask(__name__)
 
+conn = r.connect("192.168.6.26", 28015)
+conn.use('hackiiitd')
+
 @app.route('/')
 def hello_world():
     return "Welcome to jmprkableserver"
@@ -17,8 +20,7 @@ def fall():
     the_date = datetime.now(reql_tz)
     timestamp = time.mktime(the_date.timetuple())
     json_date = the_date.isoformat()
-    conn = r.connect("192.168.6.26", 28015)
-    conn.use('hackiiitd')
+
     r.table('fall').run(conn) # refers to r.db('marvel').table('heroes')
 
     data = request.args.get('fallen')
@@ -35,6 +37,8 @@ def fall():
         'from_epoch': r.epoch_time(timestamp),
         'from_iso': r.iso8601(json_date)
     }).run(conn)
+    
+    return "insertion successful"
 
 @app.route('/medicine', methods=['GET'])
 def medicine():
@@ -61,18 +65,16 @@ def medicine():
 
 @app.route('/door', methods=['GET'])
 def door():
-    data = request.data
-    dataDict = json.loads(data)
-    try:
-        status = dataDict["status"]
-    except:
-        return("Invalid data")
-    # if status is True increase the counter
-    if status:
-        r.table('aggregated').get(id).update(
-            { 'count': (r.row['count'].default(0)+1) }
-        ).run(conn)
+    r.table('door').run(conn)
 
+    status = request.args.get('status')
+
+    r.table("door").insert({
+		"door_id": 1,
+		"status": status
+		}, conflict="replace");
+
+    return "insertion successful"
 
 if __name__ == "__main__":
     app.run(port=8085, debug=False, host="0.0.0.0")

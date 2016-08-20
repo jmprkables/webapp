@@ -13,7 +13,7 @@ r.db("hackiiitd").table_create("fall").run(conn)
 print("."),
 r.db("hackiiitd").table_create("medicine").run(conn)
 print("."),
-r.db("hackiiitd").table_create("door").run(conn)
+r.db("hackiiitd").table_create("door", primary_key="door_id").run(conn)
 print("."),
 r.db("hackiiitd").table_create("photo").run(conn)
 print("."),

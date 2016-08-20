@@ -2,7 +2,7 @@ from flask import Flask, request
 import rethinkdb as r
 import time
 from datetime import datetime
-
+import json
 
 app = Flask(__name__)
 
@@ -17,17 +17,20 @@ def fall():
     the_date = datetime.now(reql_tz)
     timestamp = time.mktime(the_date.timetuple())
     json_date = the_date.isoformat()
-    conn = r.connect("mr-karan.local", 28015)
+    conn = r.connect("192.168.6.26", 28015)
+    conn.use('hackiiitd')
+    r.table('fall').run(conn) # refers to r.db('marvel').table('heroes')
 
-    data = request.data
+    data = request.args.get('fallen')
+    ''''
     dataDict = json.loads(data)
     try:
         fallen = dataDict["fallen"]
     except:
         return("Invalid data")
-
+    '''
     r.table("fall").insert({
-        "fallen": fallen,
+        "fallen": data,
         'from_object': the_date,
         'from_epoch': r.epoch_time(timestamp),
         'from_iso': r.iso8601(json_date)
@@ -40,7 +43,7 @@ def medicine():
     the_date = datetime.now(reql_tz)
     timestamp = time.mktime(the_date.timetuple())
     json_date = the_date.isoformat()
-    conn = r.connect("mr-karan.local", 28015)
+    conn = r.connect("192.168.6.26", 28015)
 
     data = request.data
     dataDict = json.loads(data)

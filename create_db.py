@@ -1,6 +1,6 @@
 import rethinkdb as r
 
-conn = r.connect("mr-karan.local", 28015)
+conn = r.connect("192.168.6.26", 28015)
 try:
 	r.db_drop("hackiiitd").run(conn)
 	print("deleted old db")
